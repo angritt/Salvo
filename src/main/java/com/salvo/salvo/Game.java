@@ -1,11 +1,12 @@
 package com.salvo.salvo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -15,14 +16,23 @@ public class Game {
     private long id;
     private Date gameDate;
 
+    public long getGameId() {
+        return id;
+    }
+
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    Set<GamePlayer> gamePlayers;
 
     public Game(){
         this.gameDate = new Date();
     }
 
-//    public Date addHour(){
-//        gameDate = Date.from(gameDate.toInstant().plusSeconds(3600));
-//        return this.gameDate;
+    public List<Player> getPlayers() {
+        return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
+    }
+
+//        public List<Player> getPlayers() {
+//        return new ArrayList<>();
 //    }
 
     public Date getGameDate() {
@@ -31,6 +41,11 @@ public class Game {
 
     public void setGameDate(Date gameDate) {
         this.gameDate = gameDate;
+    }
+
+    public void addGamePlayer(GamePlayer gamePlayer) {
+        gamePlayer.setGame(this);
+        gamePlayers.add(gamePlayer);
     }
 
 }
