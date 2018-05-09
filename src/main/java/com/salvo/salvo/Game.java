@@ -48,4 +48,7 @@ public class Game {
         gamePlayers.add(gamePlayer);
     }
 
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
 }

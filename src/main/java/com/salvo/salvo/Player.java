@@ -12,12 +12,13 @@ public class Player{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     private String firstName;
     private String lastName;
     private String userName;
 
     public long getPlayerId() {
-        return id;
+        return this.id;
     }
 
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)

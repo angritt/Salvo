@@ -17,12 +17,23 @@ public class SalvoController {
     @Autowired
     private PlayerRepository playerRepository;
 
+//    @Autowired
+//    private GamePlayerRepository gamePlayerRepository;
+
     //Gets Player Information for each game
+    private Map<String, Object> makeGamePlayersDTO(GamePlayer gamePlayer){
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        dto.put("id", gamePlayer.getGamePlayerId());
+        dto.put("first", gamePlayer.getPlayer().getFirstName());
+        dto.put("players", makePlayersDTO(gamePlayer.getPlayer()));
+        return dto;
+    }
+
+    //Gets Each Player's Information
     private Map<String, Object> makePlayersDTO(Player player){
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", player.getPlayerId());
         dto.put("userName", player.getUserName());
-//        dto.put("GamePlayers", makeGamePlayersDTO(game.getPlayers()));
         return dto;
     }
 
@@ -30,9 +41,12 @@ public class SalvoController {
     private Map<String, Object> makeGamesDTO(Game game) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", game.getGameId());
-        dto.put("GameDate", game.getGameDate());
-        dto.put("GamePlayers", getPlayers());
-//        dto.put("GamePlayers", game.getPlayers());
+        dto.put("gameDate", game.getGameDate());
+        dto.put("gamePlayers", game.getGamePlayers().stream()
+                                                    .map(gamePlayer -> makeGamePlayersDTO(gamePlayer))
+                                                    .collect(Collectors.toList()));
+//        dto.put("Players", getPlayers().);
+//        dto.put("GamePlayers", getGamePlayers());
         return dto;
     }
 
@@ -53,5 +67,12 @@ public class SalvoController {
                 .collect(Collectors.toList());
     }
 
+//    public List<Map<String, Object>> getGamePlayers() {
+//        return gamePlayerRepository
+//                .findAll()
+//                .stream()
+//                .map(gamePlayer -> makeGamePlayersDTO(gamePlayer))
+//                .collect(Collectors.toList());
+//    }
 
 }

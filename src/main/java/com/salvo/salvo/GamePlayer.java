@@ -42,7 +42,7 @@ public class GamePlayer {
     }
 
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     public void setPlayer(Player player) {
@@ -50,7 +50,7 @@ public class GamePlayer {
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
     }
 
     public void setGame(Game game) {

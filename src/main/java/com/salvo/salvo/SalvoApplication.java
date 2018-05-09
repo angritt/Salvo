@@ -66,9 +66,7 @@ public class SalvoApplication {
             gamePlayerRepository.save(gp10);
 
             GamePlayer gp11 = new GamePlayer(g6,p4);
-            GamePlayer gp12 = new GamePlayer(g6,null);
             gamePlayerRepository.save(gp11);
-            gamePlayerRepository.save(gp12);
 
         };
     }
