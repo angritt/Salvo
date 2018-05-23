@@ -1,6 +1,7 @@
 package com.salvo.salvo;
 
 import javax.persistence.*;
+import javax.xml.stream.Location;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
+
     public Game(){
         this.gameDate = new Date();
     }
@@ -30,10 +32,6 @@ public class Game {
     public List<Player> getPlayers() {
         return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }
-
-//        public List<Player> getPlayers() {
-//        return new ArrayList<>();
-//    }
 
     public Date getGameDate() {
         return this.gameDate;

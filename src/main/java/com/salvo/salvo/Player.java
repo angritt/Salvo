@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Entity
 public class Player{
@@ -27,7 +28,6 @@ public class Player{
     public Player() {    }
 
     public Player(String first, String last, String user) {
-//        this.id = id;
         this.firstName = first;
         this.lastName = last;
         this.userName = user;
@@ -59,10 +59,6 @@ public class Player{
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-//    public String toString() {
-//        return firstName + " " + lastName;
-//    }
 
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
