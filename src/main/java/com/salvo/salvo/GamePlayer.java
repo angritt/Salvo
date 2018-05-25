@@ -9,6 +9,7 @@ public class GamePlayer {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
+
     public long getGamePlayerId() {
         return this.id;
     }
@@ -20,6 +21,9 @@ public class GamePlayer {
 
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     private Set<Ship> ships = new HashSet<>();
+
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    private Set<Salvo> salvoes = new HashSet<>();
 
     @ElementCollection
     @Column(name="location")
@@ -40,6 +44,10 @@ public class GamePlayer {
         this.game = game;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public Player getPlayer() {
         return this.player;
     }
@@ -52,9 +60,7 @@ public class GamePlayer {
         return this.game;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
+    public void setGame(Game game) { this.game = game; }
 
     public Set<Ship> getShips() {
         return ships;
@@ -68,6 +74,13 @@ public class GamePlayer {
     public void addShip(Ship ship){
         this.ships.add(ship);
         ship.setGamePlayer(this);
+    }
+
+    public Set<Salvo> getSalvoes(){ return salvoes; }
+
+    public void addSalvo(Salvo salvo){
+        this.salvoes.add(salvo);
+        salvo.setGamePlayer(this);
     }
 
 }

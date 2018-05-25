@@ -1,8 +1,6 @@
 package com.salvo.salvo;
 
 import javax.persistence.*;
-import javax.xml.stream.Location;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +21,6 @@ public class Game {
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
-
 
     public Game(){
         this.gameDate = new Date();
