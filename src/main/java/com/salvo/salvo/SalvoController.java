@@ -114,6 +114,7 @@ public class SalvoController {
         gamePlayerMap.put("enemyFirstName", getEnemyPlayer(currentGP).getPlayer().getFirstName());
         gamePlayerMap.put("enemyLastName", getEnemyPlayer(currentGP).getPlayer().getLastName());
         gamePlayerMap.put("enemySalvoes", getEnemyPlayer(currentGP).getSalvoes());
+        gamePlayerMap.put("enemyShips", getEnemyPlayer(currentGP).getShips());
 
         return gamePlayerMap;
     }
