@@ -7,19 +7,59 @@ $(document).ready(function () {
     //Get Game Player URL Parameter and Add to JSON request
     $.urlParam = function (gp) {
         var results = new RegExp('(gp=\\d*)').exec(window.location.href);
-        results = results[1];
-        results = results.toString().split("=");
-        urlParam = results[1];
-        if (urlParam == null) {
-            return null; // //Add Error or Start Game page
+        if (results == null) {
+            setScoreboard()
         }
-        else {
+        else {  //Create GamePlayer View Page
+            results = results[1];
+            results = results.toString().split("=");
+            urlParam = results[1];
             jsonURL = 'http://localhost:8080/api/game_view/' + urlParam;
         }
     }
     $.urlParam();
 
-    // Make JSON request
+    //Create GamePlayer Scoreboard
+    function setScoreboard(){
+        var scoresURL = 'http://localhost:8080/api/games';
+        var gamePlayersArr = [];
+        var userName;
+        var playerScore;
+
+        $.getJSON(scoresURL, function (responseJSON) {
+            scoreBoard = responseJSON;
+console.log(scoreBoard);
+            // Get Array of GamePlayers
+            // for (var i =0; i < scoreBoard.length; i++){
+            //     // gamePlayersArr.push(scoreBoard[i].gamePlayers);
+            //
+            //     // $.each(scoreBoard[i].gamePlayers, function (j, gp) {
+            //     //     console.log(gp);
+            //     //     // console.log(gp.player);
+            //     //     console.log(player.player_id);
+            //     //
+            //     //
+            //     //     userName = gp.playerScore.player.userName;
+            //     //     playerScore = gp.playerScore.score;
+            //     //
+            //     //     // playerScore  = { [userName]: gp.playerScore.score };
+            //     //     // var arr = [playerScore];
+            //     //
+            //     //     // arr.forEach(function (playerScore, key, value) {
+            //     //     //     if (key = key){
+            //     //     //         value = value+value;
+            //     //     //     }
+            //     //     //     // document.write(value.toString() + "<br />");
+            //     //     // });
+            //     //
+            //     //     // console.log(arr);
+            //     // })
+            // }
+        });
+    }
+
+
+    // Make JSON request for GamePlayer pages
     $.getJSON(jsonURL, function (responseJSON) {
         games = responseJSON;
         // var date = new Date;
@@ -49,8 +89,6 @@ $(document).ready(function () {
             $.each(ship, function (index, ship) {
                 $.each(ship.locations, function (i, loc) {
                     opponent_loc = "Enemy_" + loc;
-                    // $("#" + opponent_loc).css("background-color", "pink");
-                    // $("#" + opponent_loc).css("border-radius", "6px");
                     enemy_ships.push(opponent_loc);
                 })
             })
@@ -58,8 +96,7 @@ $(document).ready(function () {
 
         //Shots Player has made against Opponent - Hits in red - All salvos show turn number
         function getSalvoes() {
-            var salvo = games.enemySalvoes
-            console.log(salvo);
+            var salvo = games.enemySalvoes;
             $.each(salvo, function (index, salvo) {
                 $.each(salvo.cells, function (i, cell) {
                     opponent_cell = "Enemy_" + cell;

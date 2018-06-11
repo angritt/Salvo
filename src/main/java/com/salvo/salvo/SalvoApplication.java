@@ -22,18 +22,28 @@ public class SalvoApplication {
                                       GameRepository gameRepository,
                                       GamePlayerRepository gamePlayerRepository,
                                       ShipRepository shipRepository,
-                                      SalvoRepository salvoRepository) {
+                                      SalvoRepository salvoRepository,
+                                      ScoreRepository scoreRepository) {
 
         return (args) -> {
 
             //Make Players - These are the players of all games, each can play many games but games only have 2 players
+            Player p0 = new Player("No","Player","none");
             Player p1 = new Player("Jack", "Bauer", "j.bauer@ctu.gov");
             Player p2 = new Player("Chloe", "O'Brian", "c.obrian@ctu.gov");
             Player p3 = new Player("Tony", "Almeida", "t.almeida@ctu.gov");
             Player p4 = new Player("Kim", "Bauer", "kim_bauer@gmail.com");
             Player p5 = new Player("David", "Palmer", "d.palmer@whitehouse.gov");
 
-            //Make Games - These are all the games
+            // Save players to Repository for use in Controller
+            playerRepository.save(p0);
+            playerRepository.save(p1);
+            playerRepository.save(p2);
+            playerRepository.save(p3);
+            playerRepository.save(p4);
+            playerRepository.save(p5);
+
+            //Make Games - These are all the games from the testbed
             Game g1 = new Game();
             Game g2 = new Game();
             Game g3 = new Game();
@@ -43,14 +53,7 @@ public class SalvoApplication {
             Game g7 = new Game();
             Game g8 = new Game();
 
-            // save players
-            playerRepository.save(p1);
-            playerRepository.save(p2);
-            playerRepository.save(p3);
-            playerRepository.save(p4);
-            playerRepository.save(p5);
-
-            //save games
+            //Save games in the repository for use by Controller
             gameRepository.save(g1);
             gameRepository.save(g2);
             gameRepository.save(g3);
@@ -59,6 +62,42 @@ public class SalvoApplication {
             gameRepository.save(g6);
             gameRepository.save(g7);
             gameRepository.save(g8);
+
+            //Make Scores - The final Scores of each game
+            Score s1 = new Score(g1,p1,1.0);
+            Score s2 = new Score(g1,p2,0.0);
+            Score s3 = new Score(g2,p1,0.5);
+            Score s4 = new Score(g2,p2,0.5);
+            Score s5 = new Score(g3,p2,1.0);
+            Score s6 = new Score(g3,p3,0.0);
+            Score s7 = new Score(g4,p1,0.5);
+            Score s8 = new Score(g4,p2,0.5);
+            Score s9 = new Score(g5,p3, null);
+            Score s10 = new Score(g5,p1, null);
+            Score s11 = new Score(g6,p4, null);
+            Score s12 = new Score(g6,p0, null);
+            Score s13 = new Score(g7,p3, null);
+            Score s14 = new Score(g7,p0, null);
+            Score s15 = new Score(g8,p4, null);
+            Score s16 = new Score(g8,p3, null);
+
+            //Save Scores in repository for use by Controller
+            scoreRepository.save(s1);
+            scoreRepository.save(s2);
+            scoreRepository.save(s3);
+            scoreRepository.save(s4);
+            scoreRepository.save(s5);
+            scoreRepository.save(s6);
+            scoreRepository.save(s7);
+            scoreRepository.save(s8);
+            scoreRepository.save(s9);
+            scoreRepository.save(s10);
+            scoreRepository.save(s11);
+            scoreRepository.save(s12);
+            scoreRepository.save(s13);
+            scoreRepository.save(s14);
+            scoreRepository.save(s15);
+            scoreRepository.save(s16);
 
             //Make Ships with locations for each player of each game (game + player + ship + location
             // Game 1
@@ -130,8 +169,8 @@ public class SalvoApplication {
 
 
             //Assign 2 players to each game, ships and salvoes to each player // game + player = game player
-            GamePlayer gp1 = new GamePlayer(g1, p1);
-            GamePlayer gp2 = new GamePlayer(g1, p2);
+            GamePlayer gp1 = new GamePlayer(g1,p1);
+            GamePlayer gp2 = new GamePlayer(g1,p2);
             gp1.addShip(gp1Ship1);
             gp1.addShip(gp1Ship2);
             gp1.addShip(gp1Ship3);
@@ -142,8 +181,8 @@ public class SalvoApplication {
             gp2.addSalvo(gp2Salvo1);
             gp2.addSalvo(gp2Salvo2);
 
-            GamePlayer gp3 = new GamePlayer(g2, p1);
-            GamePlayer gp4 = new GamePlayer(g2, p2);
+            GamePlayer gp3 = new GamePlayer(g2,p1);
+            GamePlayer gp4 = new GamePlayer(g2,p2);
             gp3.addShip(gp3Ship1);
             gp3.addShip(gp3Ship2);
             gp4.addShip(gp4Ship1);
@@ -153,8 +192,8 @@ public class SalvoApplication {
             gp4.addSalvo(gp4Salvo1);
             gp4.addSalvo(gp4Salvo2);
 
-            GamePlayer gp5 = new GamePlayer(g3, p2);
-            GamePlayer gp6 = new GamePlayer(g3, p3);
+            GamePlayer gp5 = new GamePlayer(g3,p2);
+            GamePlayer gp6 = new GamePlayer(g3,p3);
             gp5.addShip(gp5Ship1);
             gp5.addShip(gp5Ship2);
             gp6.addShip(gp6Ship1);
@@ -164,8 +203,8 @@ public class SalvoApplication {
             gp6.addSalvo(gp6Salvo1);
             gp6.addSalvo(gp6Salvo2);
 
-            GamePlayer gp7 = new GamePlayer(g4, p2);
-            GamePlayer gp8 = new GamePlayer(g4, p1);
+            GamePlayer gp7 = new GamePlayer(g4,p2);
+            GamePlayer gp8 = new GamePlayer(g4,p1);
             gp7.addShip(gp7Ship1);
             gp7.addShip(gp7Ship2);
             gp8.addShip(gp8Ship1);
@@ -175,8 +214,8 @@ public class SalvoApplication {
             gp8.addSalvo(gp8Salvo1);
             gp8.addSalvo(gp8Salvo2);
 
-            GamePlayer gp9 = new GamePlayer(g5, p3);
-            GamePlayer gp10 = new GamePlayer(g5, p1);
+            GamePlayer gp9 = new GamePlayer(g5,p3);
+            GamePlayer gp10 = new GamePlayer(g5,p1);
             gp9.addShip(gp9Ship1);
             gp9.addShip(gp9Ship2);
             gp10.addShip(gp10Ship1);
@@ -187,16 +226,16 @@ public class SalvoApplication {
             gp10.addSalvo(gp10Salvo2);
             gp10.addSalvo(gp10Salvo3);
 
-            GamePlayer gp11 = new GamePlayer(g6, p4);
-            GamePlayer gp12 = new GamePlayer(g6, null);
+            GamePlayer gp11 = new GamePlayer(g6,p4);
+            GamePlayer gp12 = new GamePlayer(g6,p0);
             gp11.addShip(gp11Ship1);
             gp11.addShip(gp11Ship2);
 
-            GamePlayer gp13 = new GamePlayer(g7, null);
-            GamePlayer gp14 = new GamePlayer(g7, null);
+            GamePlayer gp13 = new GamePlayer(g7,p0);
+            GamePlayer gp14 = new GamePlayer(g7,p0);
 
-            GamePlayer gp15 = new GamePlayer(g8, p3);
-            GamePlayer gp16 = new GamePlayer(g8, p4);
+            GamePlayer gp15 = new GamePlayer(g8,p3);
+            GamePlayer gp16 = new GamePlayer(g8,p4);
             gp15.addShip(gp15Ship1);
             gp15.addShip(gp15Ship2);
             gp16.addShip(gp16Ship1);

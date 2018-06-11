@@ -2,11 +2,11 @@ package com.salvo.salvo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Locale;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @Entity
 public class Player{
@@ -26,6 +26,9 @@ public class Player{
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
+
     public Player() {    }
 
     public Player(String first, String last, String user) {
@@ -38,6 +41,14 @@ public class Player{
     public List<Game> getGames() {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
     }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+//    public String getPlayer() {
+//        return player;
+//    }
 
     public String getFirstName() {
         return firstName;
@@ -64,6 +75,18 @@ public class Player{
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
         gamePlayers.add(gamePlayer);
+    }
+
+//    public Set<Score> getScores() {
+//        return scores;
+//    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public Score getScore(Game game){
+        return this.scores.stream().filter(score -> score.getGame().equals(game)).findFirst().orElse(null);
     }
 
 }

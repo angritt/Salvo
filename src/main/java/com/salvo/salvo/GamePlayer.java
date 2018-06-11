@@ -1,5 +1,7 @@
 package com.salvo.salvo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -33,6 +35,7 @@ public class GamePlayer {
     @JoinColumn(name="player_id")
     private Player player;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
@@ -64,6 +67,14 @@ public class GamePlayer {
 
     public Set<Ship> getShips() {
         return ships;
+    }
+
+    public Score getScore() {
+        if (this.player == null) {
+            return null;
+        } else {
+            return this.player.getScore(this.game);
+        }
     }
 
     public GamePlayer setShips(Ship ship) {
