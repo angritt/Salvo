@@ -16,48 +16,40 @@ $(document).ready(function () {
             urlParam = results[1];
             jsonURL = 'http://localhost:8080/api/game_view/' + urlParam;
         }
-    }
+    };
     $.urlParam();
 
     //Create GamePlayer Scoreboard
     function setScoreboard(){
-        var scoresURL = 'http://localhost:8080/api/games';
-        var gamePlayersArr = [];
+        var scoresURL = 'http://localhost:8080/api/scores';
         var userName;
-        var playerScore;
+        var score;
+        var wins;
+        var ties;
+        var losses;
 
         $.getJSON(scoresURL, function (responseJSON) {
             scoreBoard = responseJSON;
-console.log(scoreBoard);
-            // Get Array of GamePlayers
-            // for (var i =0; i < scoreBoard.length; i++){
-            //     // gamePlayersArr.push(scoreBoard[i].gamePlayers);
-            //
-            //     // $.each(scoreBoard[i].gamePlayers, function (j, gp) {
-            //     //     console.log(gp);
-            //     //     // console.log(gp.player);
-            //     //     console.log(player.player_id);
-            //     //
-            //     //
-            //     //     userName = gp.playerScore.player.userName;
-            //     //     playerScore = gp.playerScore.score;
-            //     //
-            //     //     // playerScore  = { [userName]: gp.playerScore.score };
-            //     //     // var arr = [playerScore];
-            //     //
-            //     //     // arr.forEach(function (playerScore, key, value) {
-            //     //     //     if (key = key){
-            //     //     //         value = value+value;
-            //     //     //     }
-            //     //     //     // document.write(value.toString() + "<br />");
-            //     //     // });
-            //     //
-            //     //     // console.log(arr);
-            //     // })
-            // }
+            var rows = "";
+            var row = "";
+
+            for(key in scoreBoard){
+                userName = key;
+                score = scoreBoard[key].total;
+                wins = scoreBoard[key].wins;
+                ties = scoreBoard[key].ties;
+                losses = scoreBoard[key].losses;
+
+                if (userName != "none"){
+                row = "<tr><td>"+userName+"</td><td>"+score+"</td><td>"+wins+"</td><td>"+losses+"</td><td>"+ties+"</td></tr>";
+                rows = rows + row;
+                }
+            }
+
+            $("#table-rows").html(rows);
+
         });
     }
-
 
     // Make JSON request for GamePlayer pages
     $.getJSON(jsonURL, function (responseJSON) {
@@ -129,7 +121,7 @@ console.log(scoreBoard);
                             $("#" + cell).css("border-radius", "45%");
                             $("#" + cell).css("border-color", "lightblue");
                             $("#" + cell).css("border-width", "2px");
-                            $("#" + cell).css("background-color", "red")
+                            $("#" + cell).css("background-color", "red");
                             $("#" + cell).css("text-align", "center");
                             $("#" + cell).css("color", "white");
                             $("#" + cell).text(enemySalvo.turn);
@@ -160,7 +152,7 @@ console.log(scoreBoard);
                 var row = "<tr><td class='table-primary'> " + letters + " </td>";
                 for (var i = 0; i < 10; i++) {
                     cell = letters + (1 + i);
-                    row_cell = "<td id=" + cell + "> </td>"
+                    row_cell = "<td id=" + cell + "> </td>";
                     row = row + row_cell;
                 }
                 row = row + "</tr>";
@@ -179,7 +171,7 @@ console.log(scoreBoard);
                 var opponent_row = "<tr><td class='table-primary'> " + letters + " </td>";
                 for (var i = 0; i < 10; i++) {
                     opponent_cell = "Enemy_" + letters + (1 + i);
-                    opponent_row_cell = "<td id=" + opponent_cell + "> </td>"
+                    opponent_row_cell = "<td id=" + opponent_cell + "> </td>";
                     opponent_row = opponent_row + opponent_row_cell;
                 }
                 opponent_row = opponent_row + "</tr>";
@@ -199,4 +191,4 @@ console.log(scoreBoard);
         getEnemySalvoes();
 
     });
-})
+});

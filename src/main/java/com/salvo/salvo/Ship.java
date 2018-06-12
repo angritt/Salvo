@@ -20,7 +20,7 @@ public class Ship {
     private GamePlayer gamePlayer;
 
 
-    public Ship(){};
+    public Ship(){}
 
     public Ship(String shipType, List<String> location) {
         this.locations = location;
