@@ -18,6 +18,7 @@ public class Player{
     private String firstName;
     private String lastName;
     private String userName;
+    private String password;
 
     public long getPlayerId() {
         return id;
@@ -31,10 +32,11 @@ public class Player{
 
     public Player() {    }
 
-    public Player(String first, String last, String user) {
+    public Player(String first, String last, String user, String pass) {
         this.firstName = first;
         this.lastName = last;
         this.userName = user;
+        this.password = pass;
     }
 
     @JsonIgnore
@@ -45,10 +47,6 @@ public class Player{
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
-
-//    public String getPlayer() {
-//        return player;
-//    }
 
     public String getFirstName() {
         return firstName;
@@ -72,14 +70,19 @@ public class Player{
         this.userName = userName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
         gamePlayers.add(gamePlayer);
     }
-
-//    public Set<Score> getScores() {
-//        return scores;
-//    }
 
     public Set<Score> getScores() {
         return scores;

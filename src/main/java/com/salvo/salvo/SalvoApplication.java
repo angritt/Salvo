@@ -1,17 +1,32 @@
 package com.salvo.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
-public class SalvoApplication {
+public class SalvoApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class, args);
@@ -28,12 +43,12 @@ public class SalvoApplication {
         return (args) -> {
 
             //Make Players - These are the players of all games, each can play many games but games only have 2 players
-            Player p0 = new Player("No","Player","none");
-            Player p1 = new Player("Jack", "Bauer", "j.bauer@ctu.gov");
-            Player p2 = new Player("Chloe", "O'Brian", "c.obrian@ctu.gov");
-            Player p3 = new Player("Tony", "Almeida", "t.almeida@ctu.gov");
-            Player p4 = new Player("Kim", "Bauer", "kim_bauer@gmail.com");
-            Player p5 = new Player("David", "Palmer", "d.palmer@whitehouse.gov");
+            Player p0 = new Player("No","Player","none", null);
+            Player p1 = new Player("Jack", "Bauer", "j.bauer@ctu.gov", "24");
+            Player p2 = new Player("Chloe", "O'Brian", "c.obrian@ctu.gov", "42");
+            Player p3 = new Player("Tony", "Almeida", "t.almeida@ctu.gov", "mole");
+            Player p4 = new Player("Kim", "Bauer", "kim_bauer@gmail.com", "kb");
+//            Player p5 = new Player("David", "Palmer", "d.palmer@whitehouse.gov");
 
             // Save players to Repository for use in Controller
             playerRepository.save(p0);
@@ -41,7 +56,7 @@ public class SalvoApplication {
             playerRepository.save(p2);
             playerRepository.save(p3);
             playerRepository.save(p4);
-            playerRepository.save(p5);
+//            playerRepository.save(p5);
 
             //Make Games - These are all the games from the testbed
             Game g1 = new Game();
@@ -325,4 +340,80 @@ public class SalvoApplication {
         };
     }
 
+}
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+    @Autowired
+    PlayerRepository playerRepository;
+
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(inputName-> {
+            Player player = playerRepository.findByUserName(inputName);
+            if (player != null) {
+                return new User(player.getUserName(), player.getPassword(),
+                        AuthorityUtils.createAuthorityList("PLAYER"));
+            } else {
+                System.out.println("no player");
+                throw new UsernameNotFoundException("Unknown player: " + inputName);
+            }
+        });
+    }
+
+}
+
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/logout").permitAll()
+                .antMatchers("/api/scores").permitAll()
+                .antMatchers("/web/games.html").permitAll()
+                .antMatchers("/web/games.js").permitAll()
+                .antMatchers("/**").hasAuthority("PLAYER")
+                .and()
+                .formLogin();
+
+        http.formLogin()
+                .usernameParameter("name")
+                .passwordParameter("pwd")
+                .loginPage("/api/login")
+                .permitAll();
+
+        System.out.println("name");
+        System.out.println("pwd");
+
+        http.logout().logoutUrl("/api/logout");
+
+        // turn off checking for CSRF tokens
+        http.csrf().disable();
+
+        // if user is not authenticated, just send an authentication failure response
+        http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+        // if login is successful, just clear the flags asking for authentication
+        http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+
+        // if login fails, just send an authentication failure response
+        http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+        // if logout is successful, just send a success response
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+    }
+
+    private void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+        }
+    }
+
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
 }
